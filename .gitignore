@@ -1,0 +1,8 @@
+/.idea
+/logs/
+/target/
+/*.iml
+/conf.db
+/dependency-reduced-pom.xml
+/output/
+pid

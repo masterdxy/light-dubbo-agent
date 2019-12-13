@@ -1,0 +1,240 @@
+<configuration debug="false" scan="true" scanPeriod="30 seconds">
+
+    <contextName>${LOCAL_IP}</contextName>
+
+    <property name="FILE_BASE" value="/Users/tomoyo/tmp/logs/"/>
+
+    <property name="hostName" value="${LOCAL_IP}"/>
+
+    <property name="FILE_PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [RPCAgent] [${hostName}] [%thread] [%-5level] %logger{36} - %msg - %replace(%ex){'\n','---'} %nopex %n"/>
+
+    <property name="SERVICE_LOG_FILE_NAME" value="dubbo-agent"/>
+
+    <!-- 请求日志 -->
+    <appender name="requestAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${FILE_BASE}/${SERVICE_LOG_FILE_NAME}-request.log</File>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>32MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <fileNamePattern>${FILE_BASE}/archive/${SERVICE_LOG_FILE_NAME}-request-%d{yyyy-MM-dd}-%i.log.gz
+            </fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+
+    <appender name="requestAppenderAsync" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>12</discardingThreshold>
+        <queueSize>1024</queueSize>
+        <includeCallerData>false</includeCallerData>
+        <appender-ref ref="requestAppender"/>
+    </appender>
+
+
+    <!-- 响应拒绝 -->
+    <appender name="fallbackAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${FILE_BASE}/${SERVICE_LOG_FILE_NAME}-fallback.log</File>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>32MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <fileNamePattern>${FILE_BASE}/archive/${SERVICE_LOG_FILE_NAME}-fallback-%d{yyyy-MM-dd}-%i.log.gz
+            </fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+
+    <appender name="fallbackAsync" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>12</discardingThreshold>
+        <queueSize>1024</queueSize>
+        <includeCallerData>false</includeCallerData>
+        <appender-ref ref="fallbackAppender"/>
+    </appender>
+
+
+
+
+    <!-- 响应日志 -->
+    <appender name="responseAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${FILE_BASE}/${SERVICE_LOG_FILE_NAME}-response-error.log</File>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>32MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <fileNamePattern>${FILE_BASE}/archive/${SERVICE_LOG_FILE_NAME}-response-error-%d{yyyy-MM-dd}-%i.log.gz
+            </fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+
+    <appender name="responseAppenderAsync" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>12</discardingThreshold>
+        <queueSize>1024</queueSize>
+        <includeCallerData>false</includeCallerData>
+        <appender-ref ref="responseAppender"/>
+    </appender>
+
+    <!-- reject 报警用 -->
+    <appender name="rejectAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${FILE_BASE}/${SERVICE_LOG_FILE_NAME}-reject.log</File>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>32MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <fileNamePattern>${FILE_BASE}/archive/${SERVICE_LOG_FILE_NAME}-reject-%d{yyyy-MM-dd}-%i.log.gz
+            </fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+
+    <appender name="rejectAppenderAsync" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>12</discardingThreshold>
+        <queueSize>1024</queueSize>
+        <includeCallerData>false</includeCallerData>
+        <appender-ref ref="rejectAppender"/>
+    </appender>
+
+
+
+
+    <!-- 响应日志 -->
+    <appender name="dubboAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${FILE_BASE}/${SERVICE_LOG_FILE_NAME}-dubbo-warn.log</File>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>32MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <fileNamePattern>${FILE_BASE}/archive/${SERVICE_LOG_FILE_NAME}-dubbo-warn-%d{yyyy-MM-dd}-%i.log.gz
+            </fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+
+    <appender name="dubboAppenderAsync" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>12</discardingThreshold>
+        <queueSize>1024</queueSize>
+        <includeCallerData>false</includeCallerData>
+        <appender-ref ref="dubboAppender"/>
+    </appender>
+
+
+
+
+    <appender name="info_fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${FILE_BASE}/${SERVICE_LOG_FILE_NAME}-info.log</File>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>32MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <fileNamePattern>${FILE_BASE}/archive/${SERVICE_LOG_FILE_NAME}-info-%d{yyyy-MM-dd}-%i.log.gz
+            </fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+
+    <appender name="info_fileAsync" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>12</discardingThreshold>
+        <queueSize>1024</queueSize>
+        <includeCallerData>false</includeCallerData>
+        <appender-ref ref="info_fileAppender"/>
+    </appender>
+
+    <appender name="warn_fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${FILE_BASE}/${SERVICE_LOG_FILE_NAME}-warn.log</File>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>32MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <fileNamePattern>${FILE_BASE}/archive/${SERVICE_LOG_FILE_NAME}-warn-%d{yyyy-MM-dd}-%i.log.gz
+            </fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="warn_fileAsync" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>12</discardingThreshold>
+        <queueSize>1024</queueSize>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="warn_fileAppender"/>
+    </appender>
+
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+
+    <logger name="request" level="INFO" additivity="false">
+        <appender-ref ref="requestAppenderAsync"/>
+    </logger>
+
+    <logger name="fallback" level="INFO" additivity="false">
+        <appender-ref ref="fallbackAsync"/>
+        <appender-ref ref="rejectAppenderAsync"/>
+    </logger>
+
+    <logger name="response" level="INFO" additivity="false">
+        <appender-ref ref="responseAppenderAsync"/>
+    </logger>
+
+    <logger name="com.alibaba.dubbo" level="warn" additivity="false">
+        <appender-ref ref="dubboAppenderAsync"/>
+    </logger>
+
+    <root level="INFO">
+        <!--<appender-ref ref="STDOUT"/>-->
+        <appender-ref ref="info_fileAsync"/>
+        <appender-ref ref="warn_fileAsync"/>
+    </root>
+
+</configuration>
